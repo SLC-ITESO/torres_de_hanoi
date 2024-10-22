@@ -29,9 +29,9 @@ termina_torre:
 	# LAS DIRECCIONES SE ENCUENTRAN EN LA "BASE" DE LAS TORRES
 	
 	#Para mejor entendimiento, se le asignara un numero a cada torre
-	addi t3, zero, 1			# 1 sera la torre A, o torre ORIGEN
-	addi t4, zero, 2			# 2 sera la torre B, o torre AUXILIAR
-	addi t5, zero, 3			# 3 sera la torre C, o torre DESTINO
+	addi t3, zero, 1			# 1 sera la torre A
+	addi t4, zero, 2			# 2 sera la torre B
+	addi t5, zero, 3			# 3 sera la torre C
 	
 	jal movedera_recursiva
 	#void hanoi(int n, char origen, char destino, char auxiliar)
@@ -39,6 +39,9 @@ termina_torre:
 	jal si_termina
 	
 movedera_recursiva: #void hanoi()
+	add t2 t4, zero  			# t2 = t4 | almacenamos t4 en t2
+	add t4, t5, zero  			# t4 = t5
+	add t5, t2, zero  			# t5 = t2 | t2 tenï¿½a el valor original de t4
 	
 	beq s0, t0, es_uno			# if n == 1
 	
@@ -46,15 +49,11 @@ movedera_recursiva: #void hanoi()
     	sw ra, 0x0(sp)
     	sw s0, 0x4(sp)
     	sw t3, 0x8(sp)				# origen
-    	sw t5, 0xC(sp)				# destino
-    	sw t4, 0x10(sp)				# auxiliar
-    	
+    	sw t4, 0xC(sp)				# auxiliar
+    	sw t5, 0x10(sp)				# destino
     	#hanoi(n - 1, origen, auxiliar, destino);
     	addi s0, s0, -1
-    	#-
-	add t2 t4, zero  			# t2 = t4 | almacenamos t4 en t2
-	add t4, t5, zero  			# t4 = t5
-	add t5, t2, zero  			# t5 = t2 | t2 tenía el valor original de t4
+    	
     	
     	jal movedera_recursiva
     	#printf("Mover disco %d de %c a %c\n", n, origen, destino);
@@ -68,10 +67,10 @@ movedera_recursiva: #void hanoi()
 	
 	#hanoi(n - 1, auxiliar, destino, origen);
 	addi s0, s0, -1
-	#Falta revisar esta logica!
-	#add t2, t3, zero         # t2 = origen (almacenamos el origen en t2)
-	#add t3, t5, zero         # t3 = destino (almacenamos el destino en t3)
-	#add t5, t4, zero         # t5 = auxiliar (el auxiliar pasa a ser el destino)
+	#AQUI
+	add t2, t3, zero         # t2 = origen (almacenamos el origen en t2)
+	add t3, t5, zero         # t3 = destino (almacenamos el destino en t3)
+	add t5, t4, zero         # t5 = auxiliar (el auxiliar pasa a ser el destino)
 	jal movedera_recursiva
 	
 	jalr ra
@@ -81,6 +80,8 @@ es_uno:
         #	return;
         
         jalr ra
-        
+white_snake:
+
+
 si_termina:
 	addi a6, zero, 0xF
